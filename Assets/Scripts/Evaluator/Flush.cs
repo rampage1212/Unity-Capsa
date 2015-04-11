@@ -34,7 +34,7 @@ public class Flush : IEvaluator<Flush> {
 	}
 
 	void FilterCards(CardSet cardSet) {
-		for (int i = 0; i < Mathf.Max(0, CardSet.Count - 4); ++i) {
+		for (int i = 0; i < Mathf.Max(0, cardSet.Count - 4); ++i) {
 			CardSet set = cardSet.GetRange (i, 5) as CardSet; 
 			if (filter(set[4]))
 				results.Add (set);
