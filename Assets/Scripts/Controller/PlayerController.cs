@@ -45,11 +45,29 @@ public class PlayerController : MonoBehaviour {
 		view.OnTurnBegin ();
 
 		analyzeCombination = PokerHand.CombinationType.Straight;
+		StartCoroutine ("OnTurn");
 		StartCoroutine ("Analyze");
+	}
+
+	IEnumerator OnTurn() {
+		float time = 15f;
+		float lastUpdateTime = Time.time;
+
+		while (time > 0f) {
+			time -= (Time.time - lastUpdateTime);
+			lastUpdateTime = Time.time;
+			view.TimeLeft = time;
+
+			yield return null;
+		}
+		
+		// Timeout
+		TrickController.Instance.Pass ();
 	}
 
 	public void OnTurnEnd() {
 		StopCoroutine ("Analyze");
+		StopCoroutine ("OnTurn");
 		view.OnTurnEnd ();
 	}
 
@@ -68,6 +86,11 @@ public class PlayerController : MonoBehaviour {
 		} else {
 			view.OnDealFailed ();
 		}
+	}
+
+	public void Pass() {
+		TrickController.Instance.Pass ();
+		view.OnPass ();
 	}
 
 	IEnumerator Analyze() {

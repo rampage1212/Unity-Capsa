@@ -62,6 +62,10 @@ public class PlayerView : MonoBehaviour {
 	public void OnDealFailed() {
 	}
 
+	public void OnPass() {
+		passIndicator.SetActive (true);
+	}
+
 	// Helper events for interface
 	public void OnSelectStraight() {
 		MarkAll (straight, lastMarkCombination != PokerHand.CombinationType.Straight);
@@ -133,7 +137,7 @@ public class PlayerView : MonoBehaviour {
 	}
 
 	public float TimeLeft {
-		set { if (labelTimer) labelTimer.text = "" + value; }
+		set { if (labelTimer) labelTimer.text = "" + Mathf.CeilToInt(value); }
 	}
 
 	public CardSet Straight {

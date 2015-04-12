@@ -6,9 +6,9 @@ using CardSet = System.Collections.Generic.List<Card>;
 [RequireComponent(typeof(TrickView))]
 public class TrickController : MonoBehaviour {
 	public Card prefabs;
-	public List<PokerHand> tricks;
 	public List<PlayerController> players;
 
+	List<PokerHand> tricks = new List<PokerHand>();
 	TrickView view;
 	int nextTurnPlayer;
 	int lastTurnPlayer;
