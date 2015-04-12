@@ -7,14 +7,17 @@ public class FullHouse : IEvaluator<FullHouse> {
 	public List<CardSet> triples = null;
 	public List<CardSet> pairs = null;
 
+	Triple tripleEvaluator = new Triple();
+	Pair pairEvaluator = new Pair();
+
 	protected override void PreEvaluate () {
 		// Do nothing if triples and pairs is specified manually
 		if (triples != null || pairs != null)
 			return;
 
 		// Begin Pair and Triple evaluation
-		Pair.Instance.Begin (cardSet, filter);
-		Triple.Instance.Begin (cardSet, filter);
+		tripleEvaluator.Begin (cardSet, filter);
+		pairEvaluator.Begin (cardSet, filter);
 	}
 
 	public override void Evaluate(int index) {
@@ -23,20 +26,20 @@ public class FullHouse : IEvaluator<FullHouse> {
 			return;
 
 		// Evaluate each card
-		Pair.Instance.Evaluate (index);
-		Triple.Instance.Evaluate (index);
+		tripleEvaluator.Evaluate (index);
+		pairEvaluator.Evaluate (index);
 	}
 
 	protected override void PostEvaluate () {
 		// Do nothing if triples and pairs is specified manually
 		if (triples == null && pairs == null) {
 			// End Pair and Triple evaluation
-			Pair.Instance.End ();
-			Triple.Instance.End ();
+			tripleEvaluator.End ();
+			pairEvaluator.End ();
 
 			// Get the result of the evaluation
-			pairs = Pair.Instance.Results;
-			triples = Triple.Instance.Results;
+			pairs = tripleEvaluator.Results;
+			triples = pairEvaluator.Results;
 		}
 
 		// Build the result
