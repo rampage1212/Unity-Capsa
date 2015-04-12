@@ -2,7 +2,7 @@
 using UnityEngine.UI;
 using System.Collections;
 
-public class PlayerHelper : MonoBehaviour {
+public class PlayerView : MonoBehaviour {
 	public GameObject controlIndicator;
 	public GameObject passIndicator;
 	public Text labelTimer;

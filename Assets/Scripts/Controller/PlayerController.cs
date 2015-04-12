@@ -2,9 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 
-[RequireComponent(typeof(PlayerHelper))]
+[RequireComponent(typeof(PlayerView))]
 public class PlayerController : MonoBehaviour {
-	PlayerHelper helper;
+	PlayerView view;
 	CardSet cards;
 
 	// Possible Poker Hand Combinations
@@ -17,15 +17,15 @@ public class PlayerController : MonoBehaviour {
 	PokerHand.CombinationType analyzeCombination = PokerHand.CombinationType.Invalid;
 
 	void Awake() {
-		helper = GetComponent<PlayerHelper> ();
+		view = GetComponent<PlayerView> ();
 	}
 
 	public CardSet Cards {
 		set { 
 			cards = value; 
 			cards.Sort();
-			helper.TotalCard = cards.Count;
-			helper.Display (cards);
+			view.TotalCard = cards.Count;
+			view.Display (cards);
 		}
 	}
 
@@ -47,7 +47,7 @@ public class PlayerController : MonoBehaviour {
 		case PokerHand.CombinationType.Straight:
 			hands.AddRange (Triple.Instance.LazyEvaluator (cards, analyzeAllMatch, analyzeFilter));
 			if (hands.Count > 0)
-				helper.Straight = hands[hands.Count - 1].Cards;
+				view.Straight = hands[hands.Count - 1].Cards;
 			if (!analyzeAllMatch && hands.Count > 0)
 				break;
 			yield return null;
@@ -55,7 +55,7 @@ public class PlayerController : MonoBehaviour {
 		case PokerHand.CombinationType.Flush:
 			hands.AddRange (Flush.Instance.LazyEvaluator (cards, analyzeAllMatch, analyzeFilter));
 			if (hands.Count > 0)
-				helper.Flush = hands[hands.Count - 1].Cards;
+				view.Flush = hands[hands.Count - 1].Cards;
 			if (!analyzeAllMatch && hands.Count > 0)
 				break;
 			yield return null;
@@ -63,7 +63,7 @@ public class PlayerController : MonoBehaviour {
 		case PokerHand.CombinationType.FullHouse:
 			hands.AddRange (FullHouse.Instance.LazyEvaluator (cards, analyzeAllMatch, analyzeFilter));
 			if (hands.Count > 0)
-				helper.FullHouse = hands[hands.Count - 1].Cards;
+				view.FullHouse = hands[hands.Count - 1].Cards;
 			if (!analyzeAllMatch && hands.Count > 0)
 				break;
 			yield return null;
@@ -71,7 +71,7 @@ public class PlayerController : MonoBehaviour {
 		case PokerHand.CombinationType.FourOfAKind:
 			hands.AddRange (FourOfAKind.Instance.LazyEvaluator (cards, analyzeAllMatch, analyzeFilter));
 			if (hands.Count > 0)
-				helper.FourOfAKind = hands[hands.Count - 1].Cards;
+				view.FourOfAKind = hands[hands.Count - 1].Cards;
 			if (!analyzeAllMatch && hands.Count > 0)
 				break;
 			yield return null;
@@ -79,7 +79,7 @@ public class PlayerController : MonoBehaviour {
 		case PokerHand.CombinationType.StraightFlush:
 			hands.AddRange (StraightFlush.Instance.LazyEvaluator (cards, analyzeAllMatch, analyzeFilter));
 			if (hands.Count > 0)
-				helper.StraightFlush = hands[hands.Count - 1].Cards;
+				view.StraightFlush = hands[hands.Count - 1].Cards;
 			if (!analyzeAllMatch && hands.Count > 0)
 				break;
 			yield return null;
@@ -87,7 +87,7 @@ public class PlayerController : MonoBehaviour {
 		case PokerHand.CombinationType.RoyalFlush:
 			hands.AddRange (RoyalFlush.Instance.LazyEvaluator (cards, analyzeAllMatch, analyzeFilter));
 			if (hands.Count > 0)
-				helper.RoyalFlush = hands[hands.Count - 1].Cards;
+				view.RoyalFlush = hands[hands.Count - 1].Cards;
 			if (!analyzeAllMatch && hands.Count > 0)
 				break;
 			yield return null;
@@ -95,10 +95,10 @@ public class PlayerController : MonoBehaviour {
 		case PokerHand.CombinationType.Dragon:
 			hands.AddRange (Dragon.Instance.LazyEvaluator (cards, analyzeAllMatch, analyzeFilter));
 			if (hands.Count > 0)
-				helper.Dragon = hands[hands.Count - 1].Cards;
+				view.Dragon = hands[hands.Count - 1].Cards;
 			break;
 		}
 
-		helper.Hint = hands.Count > 0 ? hands[0].Cards : null;
+		view.Hint = hands.Count > 0 ? hands[0].Cards : null;
 	}
 }
