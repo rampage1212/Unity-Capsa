@@ -16,7 +16,7 @@ public class Straight : IEvaluator<Straight> {
 
 	protected override void PostEvaluate () {
 		PostEvaluateStraight (ref results, ref bucket, ref special);
-		results.Sort ((set1, set2) => set1 [4].CompareTo (set2 [4]));
+		results.Sort ();
 	}
 
 	public static void PreEvaluateStraight(ref CardSet bucket, ref CardSet special) {
@@ -24,7 +24,7 @@ public class Straight : IEvaluator<Straight> {
 		special.Clear ();
 	}
 
-	public static void EvaluateStraight(ref List<CardSet> results, Card card, ref CardSet bucket, ref CardSet special, Func<Card, bool> filter) {
+	public static void EvaluateStraight(ref List<PokerHand> results, Card card, ref CardSet bucket, ref CardSet special, Func<Card, bool> filter) {
 		if (bucket.Count > 0) {
 			int step = card.Score - bucket [bucket.Count - 1].Score;
 			
@@ -36,7 +36,7 @@ public class Straight : IEvaluator<Straight> {
 			// If 5 combination already found, add to result and remove first item for next possibility
 			if (bucket.Count == 5) {
 				if (filter (bucket [4]))
-					results.Add (bucket);
+					results.Add (new PokerHand(bucket, bucket[4], PokerHand.CombinationType.Straight));
 				bucket.RemoveAt (0);
 			}
 		} else {
@@ -59,21 +59,22 @@ public class Straight : IEvaluator<Straight> {
 		}
 	}
 
-	public static void PostEvaluateStraight(ref List<CardSet> results, ref CardSet bucket, ref CardSet special) {
+	public static void PostEvaluateStraight(ref List<PokerHand> results, ref CardSet bucket, ref CardSet special) {
 		if (special.Count >= 5 && special [special.Count - 1].Nominal == "2") {
 			if (special.Count == 5){
-				results.Add(special);
+				results.Add(new PokerHand(special, special[4], PokerHand.CombinationType.Straight));
 			} else if (special.Count == 6) {
+				var set = new CardSet();
+
 				// 2-3-4-5-6
-				CardSet set = special.GetRange(0, 4) as CardSet;
-				set.Add(special[special.Count - 1]);
-				results.Add(set);
-				
+				set.Add(special[special.Count - 1]); // 2
+				set.AddRange(special.GetRange(0, 4) as CardSet); // 3-4-5-6
+				results.Add(new PokerHand(set, set[0], PokerHand.CombinationType.Straight));
+
 				// A-2-3-4-5
-				set = special.GetRange(0, 3) as CardSet;
-				set.Add(special[special.Count - 2]);
-				set.Add(special[special.Count - 1]);
-				results.Add(set);
+				set = special.GetRange(special.Count - 2, 2) as CardSet; // A-2
+				set.AddRange(special.GetRange(0, 3) as CardSet); // 3-4-5
+				results.Add(new PokerHand(set, set[1], PokerHand.CombinationType.Straight));
 			}
 		}
 	}

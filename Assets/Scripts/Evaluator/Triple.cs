@@ -12,7 +12,7 @@ public class Triple : IEvaluator<Triple> {
 		if (triple[0].Nominal == triple[2].Nominal && filter(triple[2])) {
 			var set = new CardSet();
 			set.AddRange(triple);
-			results.Add(set);
+			results.Add(new PokerHand(set, set[2], PokerHand.CombinationType.Triple));
 		}
 	}
 }

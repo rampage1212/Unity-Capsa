@@ -5,7 +5,7 @@ public class Single : IEvaluator<Single> {
 		if (filter(cardSet[index])) {
 			var set = new CardSet();
 			set.Add(cardSet[index]);
-			results.Add(set);
+			results.Add(new PokerHand(set, set[0], PokerHand.CombinationType.Single));
 		}
 	}
 }

@@ -2,8 +2,6 @@
 using System;
 using System.Collections.Generic;
 
-public class CardSet : List<Card> {}
-
 public class IEvaluator<T> where T : class, new() {
 	// This singleton doens't protect derived class from being intantiated using new, but at least it's bring convenience
 	private static T sInstance = new T();
@@ -20,13 +18,13 @@ public class IEvaluator<T> where T : class, new() {
 	#pragma warning restore 0414
 
 	// Result of operation
-	protected List<CardSet> results = new List<CardSet>();
-	public List<CardSet> Results {
+	protected List<PokerHand> results = new List<PokerHand>();
+	public List<PokerHand> Results {
 		get {
 			if (cardSet != null) {
 				Debug.LogWarning("Get Result before Evaluation Finish");
 			}
-			return results.Count > 0 ? results : null;
+			return results;
 		}
 	}
 
@@ -73,7 +71,7 @@ public class IEvaluator<T> where T : class, new() {
 	// cards : collection of card to be evaluated
 	// all : false to return only first occurence
 	// filterFunction : lambda function to evaluate condition of result
-	public List<CardSet> LazyEvaluator(CardSet cards, bool all = false, Func<Card, bool> filterFunction = null) {
+	public List<PokerHand> LazyEvaluator(CardSet cards, bool all = false, Func<Card, bool> filterFunction = null) {
 		Begin (cards, filterFunction);
 		for (int i = 0; i < cards.Count; ++i) {
 			Evaluate(i);

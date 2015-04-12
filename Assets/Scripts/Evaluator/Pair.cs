@@ -11,7 +11,7 @@ public class Pair : IEvaluator<Pair> {
 		if (pair[0].Nominal == pair[1].Nominal && filter(pair[1])) {
 			var set = new CardSet();
 			set.AddRange(pair);
-			results.Add(set);
+			results.Add(new PokerHand(set, set[1], PokerHand.CombinationType.Pair));
 		}
 	}
 }

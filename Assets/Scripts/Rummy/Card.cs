@@ -2,6 +2,7 @@
 using UnityEngine.UI;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 
 public class Card : MonoBehaviour, IComparable<Card> {
 	public enum Suit {
@@ -77,3 +78,5 @@ public class Card : MonoBehaviour, IComparable<Card> {
 			return this._score - other._score;
 	}
 }
+
+public class CardSet : List<Card> {}

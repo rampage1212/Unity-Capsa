@@ -12,7 +12,7 @@ public class FourOfAKind : IEvaluator<FourOfAKind> {
 			var set = new CardSet();
 			set.Add(cardSet[index == 0 ? 4 : 0]);
 			set.AddRange(quad);
-			results.Add(set);
+			results.Add(new PokerHand(set, set[4], PokerHand.CombinationType.FourOfAKind));
 		}
 	}
 }

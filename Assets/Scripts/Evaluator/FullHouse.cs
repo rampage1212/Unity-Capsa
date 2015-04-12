@@ -4,8 +4,8 @@ using System.Collections.Generic;
 // 1 Triple + 1 Pair
 public class FullHouse : IEvaluator<FullHouse> {
 	// Explicitly set triples and pairs to prevent doing another loop check
-	public List<CardSet> triples = null;
-	public List<CardSet> pairs = null;
+	public List<PokerHand> triples = null;
+	public List<PokerHand> pairs = null;
 
 	Triple tripleEvaluator = new Triple();
 	Pair pairEvaluator = new Pair();
@@ -47,10 +47,10 @@ public class FullHouse : IEvaluator<FullHouse> {
 		for (int tIndex = 0; tIndex < triples.Count; ++tIndex) {
 			fullHouse.Clear();
 			for (int pIndex = 0; pIndex < pairs.Count; ++pIndex) {
-				if (triples[tIndex][0].Nominal != pairs[pIndex][0].Nominal) {
-					fullHouse.AddRange(pairs[pIndex]);
-					fullHouse.AddRange(triples[tIndex]);
-					results.Add(fullHouse);
+				if (triples[tIndex].Cards[0].Nominal != pairs[pIndex].Cards[0].Nominal) {
+					fullHouse.AddRange(pairs[pIndex].Cards);
+					fullHouse.AddRange(triples[tIndex].Cards);
+					results.Add(new PokerHand(fullHouse, triples[tIndex].Cards[2], PokerHand.CombinationType.FullHouse));
 					break;
 				}
 			}

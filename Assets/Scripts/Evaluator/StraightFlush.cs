@@ -43,6 +43,6 @@ public class StraightFlush : IEvaluator<StraightFlush> {
 		Straight.PostEvaluateStraight (ref results, ref bucketClubs, ref specialClubs);
 		Straight.PostEvaluateStraight (ref results, ref specialDiamonds, ref specialDiamonds);
 
-		results.Sort ((set1, set2) => set1 [4].CompareTo (set2 [4]));
+		results.Sort ();
 	}
 }

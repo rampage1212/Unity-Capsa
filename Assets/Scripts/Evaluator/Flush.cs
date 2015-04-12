@@ -37,14 +37,14 @@ public class Flush : IEvaluator<Flush> {
 		FilterCards (clubs);
 		FilterCards (diamonds);
 
-		results.Sort ((set1, set2) => set1 [4].CompareTo (set2 [4]));
+		results.Sort ();
 	}
 
 	void FilterCards(CardSet cardSet) {
 		for (int i = 0; i < Mathf.Max(0, cardSet.Count - 4); ++i) {
 			CardSet set = cardSet.GetRange (i, 5) as CardSet; 
 			if (filter(set[4]))
-				results.Add (set);
+				results.Add (new PokerHand(set, set[4], PokerHand.CombinationType.Flush));
 		}
 	}
 }

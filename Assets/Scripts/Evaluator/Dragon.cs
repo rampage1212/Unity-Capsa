@@ -17,6 +17,6 @@ public class Dragon : IEvaluator<Dragon> {
 
 	protected override void PostEvaluate () {
 		if (dragon.Count == 13)
-			results.Add (dragon);
+			results.Add (new PokerHand(dragon, dragon[dragon.Count - 1]	, PokerHand.CombinationType.Dragon));
 	}
 }
