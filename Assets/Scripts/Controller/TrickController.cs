@@ -2,16 +2,22 @@
 using System.Collections;
 using System.Collections.Generic;
 
+[RequireComponent(typeof(TrickView))]
 public class TrickController : MonoBehaviour {
 	public Card prefabs;
 	public List<PokerHand> tricks;
 	public List<PlayerController> players;
-	
+
+	TrickView view;
 	int nextTurnPlayer;
 	int lastTurnPlayer;
 	int passPlayer;
 	bool firstTurn = true;
 	bool isGameOver = false;
+
+	void Awake() {
+		view = GetComponent<TrickView> ();
+	}
 
 	void Start() {
 		// Initialize cards
@@ -98,5 +104,49 @@ public class TrickController : MonoBehaviour {
 			NextTurn ();
 		else
 			OnEndTrick ();
+	}
+
+	public bool Deal(PokerHand hand) {
+		if (hand.Cards.Count == 0 || hand.Combination == PokerHand.CombinationType.Invalid) {
+			view.NotifyMessage ("Invalid deal!");
+			return false;
+		}
+		
+		if (firstTurn && hand.Cards [0].Nominal != "3" && hand.Cards [0].suit != Card.Suit.Diamond) {
+			view.NotifyMessage ("Must include 3 Diamond");
+			return false;
+		}
+		firstTurn = false;
+		
+		// Initialize Tricks if still empty
+		if (tricks.Count == 0) {
+			tricks.Add (hand);
+			lastTurnPlayer = nextTurnPlayer == 0 ? players.Count - 1 : nextTurnPlayer - 1;
+			NextTurn ();
+			return true;
+		} else {
+			var last = tricks[tricks.Count - 1];
+			
+			if (hand.Combination <= PokerHand.CombinationType.Triple && last.Combination <= PokerHand.CombinationType.Triple) {
+				// Single, Pair or Triple rule
+				if (hand.Combination == last.Combination && hand.Key > last.Key) {
+					tricks.Add (hand);
+					lastTurnPlayer = nextTurnPlayer == 0 ? players.Count - 1 : nextTurnPlayer - 1;
+					NextTurn ();
+					return true;
+				}
+			} else if (hand.Combination > PokerHand.CombinationType.Triple && last.Combination >  PokerHand.CombinationType.Triple) {
+				// 5-card hand
+				if (hand > last) {
+					tricks.Add (hand);
+					lastTurnPlayer = nextTurnPlayer == 0 ? players.Count - 1 : nextTurnPlayer - 1;
+					NextTurn ();
+					return true;
+				}
+			} else {
+				view.NotifyMessage("Card Too Small or Combination is different");
+			}
+			return false;
+		}
 	}
 }

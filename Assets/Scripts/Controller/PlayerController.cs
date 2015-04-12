@@ -44,8 +44,8 @@ public class PlayerController : MonoBehaviour {
 
 		// One analysis each frame
 		switch (analyzeCombination) {
-		case PokerHand.CombinationType.Single:
-			hands.AddRange (Single.Instance.LazyEvaluator (cards, analyzeAllMatch, analyzeFilter));
+		case PokerHand.CombinationType.One:
+			hands.AddRange (One.Instance.LazyEvaluator (cards, analyzeAllMatch, analyzeFilter));
 			break;
 		case PokerHand.CombinationType.Pair:
 			hands.AddRange (Pair.Instance.LazyEvaluator (cards, analyzeAllMatch, analyzeFilter));
