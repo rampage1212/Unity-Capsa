@@ -25,6 +25,7 @@ public class PlayerController : MonoBehaviour {
 			cards = value; 
 			cards.Sort();
 			helper.TotalCard = cards.Count;
+			helper.Display (cards);
 		}
 	}
 
