@@ -15,4 +15,10 @@ public class TrickView : MonoBehaviour {
 
 	public void NotifyMessage(string message) {
 	}
+
+	public void OnDealSuccess(){
+	}
+
+	public void OnDealFailed(){
+	}
 }

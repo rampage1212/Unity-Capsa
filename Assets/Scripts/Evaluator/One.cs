@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using CardSet = System.Collections.Generic.List<Card>;
 
 public class One : IEvaluator<One> {
 	public override void Evaluate(int index) {

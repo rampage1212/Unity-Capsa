@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using CardSet = System.Collections.Generic.List<Card>;
 
 public class PokerHand : IComparable<PokerHand> {
 	public enum CombinationType {

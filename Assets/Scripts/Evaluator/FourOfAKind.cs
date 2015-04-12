@@ -1,11 +1,12 @@
 using System.Collections;
+using CardSet = System.Collections.Generic.List<Card>;
 
 public class FourOfAKind : IEvaluator<FourOfAKind> {
 	public override void Evaluate(int index) {
 		base.Evaluate (index);
 
 		// 5 card is needed at least and Max index is (n-1) - 3, don't evaluate
-		if (cardSet.Count < 5 || index > cardSet.Count - 3)
+		if (cardSet.Count < 5 || index > cardSet.Count - 4)
 			return;
 
 		// Compare first and last nominal, since it's already sorted

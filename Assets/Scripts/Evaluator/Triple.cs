@@ -1,4 +1,5 @@
 using System.Collections;
+using CardSet = System.Collections.Generic.List<Card>;
 
 // Three card with same number
 public class Triple : IEvaluator<Triple> {
@@ -9,10 +10,8 @@ public class Triple : IEvaluator<Triple> {
 
 		// Compare first and last nominal, since it's already sorted
 		Card [] triple = { cardSet [index], cardSet [index + 1], cardSet[index + 2] };
-		if (triple[0].Nominal == triple[2].Nominal && filter(triple[2])) {
-			var set = new CardSet();
-			set.AddRange(triple);
-			results.Add(new PokerHand(set, set[2], PokerHand.CombinationType.Triple));
+		if (triple[0].Score == triple[1].Score && triple[1].Score == triple[2].Score && filter(triple[2])) {
+			results.Add(new PokerHand(new CardSet(triple), triple[2], PokerHand.CombinationType.Triple));
 		}
 	}
 	

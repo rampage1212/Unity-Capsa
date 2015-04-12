@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using CardSet = System.Collections.Generic.List<Card>;
 
 [RequireComponent(typeof(TrickView))]
 public class TrickController : MonoBehaviour {
@@ -14,6 +15,16 @@ public class TrickController : MonoBehaviour {
 	int passPlayer;
 	bool firstTurn = true;
 	bool isGameOver = false;
+
+	// Singleton
+	private static TrickController instance;
+	public static TrickController Instance {
+		get {
+			if(instance == null)
+				instance = GameObject.FindObjectOfType<TrickController>();
+			return instance;
+		}
+	}
 
 	void Awake() {
 		view = GetComponent<TrickView> ();
@@ -49,26 +60,19 @@ public class TrickController : MonoBehaviour {
 		var set = new CardSet ();
 		set.AddRange (allCard);
 		for (int i = 0; i < players.Count; ++i) {
-			players[i].Cards = set.GetRange(i * 13, 13) as CardSet;
+			players[i].id = i;
+			players[i].Cards = set.GetRange(i * 13, 13);
 			
 			// If have '3 diamond' card, play first turn
 			var firstCard = players[i].Cards[0];
 			if (firstCard.Nominal == "3" && firstCard.suit == Card.Suit.Diamond) {
-				nextTurnPlayer = lastTurnPlayer = i;
+//				nextTurnPlayer = lastTurnPlayer = i;
 			}
 		}
 		OnBeginTrick ();
 	}
 
-	void OnBeginTrick() {
-		// Empty Cards Bet
-		for (int i = 0; i < tricks.Count; ++i){
-			for (int c = 0; c <tricks[i].Cards.Count; ++c){
-				Destroy(tricks[i].Cards[c].gameObject);
-			}
-		}
-		tricks.Clear ();
-		
+	void OnBeginTrick() {		
 		// Reset all player state
 		for (int i = 0; i < players.Count; ++i)
 			players[i].OnTurnEnd ();
@@ -81,6 +85,14 @@ public class TrickController : MonoBehaviour {
 	}
 
 	void OnEndTrick() {
+		// Empty Cards
+		for (int i = 0; i < tricks.Count; ++i){
+			for (int c = 0; c <tricks[i].Cards.Count; ++c){
+				Destroy(tricks[i].Cards[c].gameObject);
+			}
+		}
+		tricks.Clear ();
+
 		OnBeginTrick ();
 	}
 

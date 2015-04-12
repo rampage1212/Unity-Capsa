@@ -1,4 +1,5 @@
 using System.Collections;
+using CardSet = System.Collections.Generic.List<Card>;
 
 public class StraightFlush : IEvaluator<StraightFlush> {
 	CardSet bucketSpades = new CardSet();

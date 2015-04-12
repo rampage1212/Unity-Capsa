@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using CardSet = System.Collections.Generic.List<Card>;
 
 public class Straight : IEvaluator<Straight> {
 	CardSet bucket = new CardSet();
@@ -36,7 +37,7 @@ public class Straight : IEvaluator<Straight> {
 			// If 5 combination already found, add to result and remove first item for next possibility
 			if (bucket.Count == 5) {
 				if (filter (bucket [4]))
-					results.Add (new PokerHand(bucket, bucket[4], PokerHand.CombinationType.Straight));
+					results.Add (new PokerHand(new CardSet(bucket), bucket[4], PokerHand.CombinationType.Straight));
 				bucket.RemoveAt (0);
 			}
 		} else {
@@ -68,12 +69,12 @@ public class Straight : IEvaluator<Straight> {
 
 				// 2-3-4-5-6
 				set.Add(special[special.Count - 1]); // 2
-				set.AddRange(special.GetRange(0, 4) as CardSet); // 3-4-5-6
+				set.AddRange(special.GetRange(0, 4)); // 3-4-5-6
 				results.Add(new PokerHand(set, set[0], PokerHand.CombinationType.Straight));
 
 				// A-2-3-4-5
-				set = special.GetRange(special.Count - 2, 2) as CardSet; // A-2
-				set.AddRange(special.GetRange(0, 3) as CardSet); // 3-4-5
+				set = special.GetRange(special.Count - 2, 2); // A-2
+				set.AddRange(special.GetRange(0, 3)); // 3-4-5
 				results.Add(new PokerHand(set, set[1], PokerHand.CombinationType.Straight));
 			}
 		}

@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using CardSet = System.Collections.Generic.List<Card>;
 
 // 1 Triple + 1 Pair
 public class FullHouse : IEvaluator<FullHouse> {
@@ -40,12 +41,12 @@ public class FullHouse : IEvaluator<FullHouse> {
 			pairEvaluator.End ();
 
 			// Get the result of the evaluation
-			pairs = tripleEvaluator.Results;
-			triples = pairEvaluator.Results;
+			triples = tripleEvaluator.Results;
+			pairs = pairEvaluator.Results;
 		}
 
 		// Build the result
-		CardSet fullHouse = new CardSet ();
+		CardSet fullHouse = new CardSet (5);
 		for (int tIndex = 0; tIndex < triples.Count; ++tIndex) {
 			fullHouse.Clear();
 			for (int pIndex = 0; pIndex < pairs.Count; ++pIndex) {

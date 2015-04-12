@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using CardSet = System.Collections.Generic.List<Card>;
 
 // 13 card straight in order
 public class Dragon : IEvaluator<Dragon> {

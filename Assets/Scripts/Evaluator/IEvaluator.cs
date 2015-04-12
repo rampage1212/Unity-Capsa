@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System;
 using System.Collections.Generic;
+using CardSet = System.Collections.Generic.List<Card>;
 
 public class IEvaluator<T> where T : class, new() {
 	// This singleton doens't protect derived class from being intantiated using new, but at least it's bring convenience
@@ -77,7 +78,7 @@ public class IEvaluator<T> where T : class, new() {
 			Evaluate(i);
 		}
 		End ();
-		return Results;
+		return results;
 	}
 
 	public virtual bool IsValid(CardSet cards, bool isSorted = false) { 

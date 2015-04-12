@@ -1,15 +1,13 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using CardSet = System.Collections.Generic.List<Card>;
 
 public class RoyalFlush : IEvaluator<RoyalFlush> {
 	StraightFlush evaluator = new StraightFlush();
 
 	protected override void PreEvaluate () {
-		int scoreMin = Array.IndexOf<string>(Card.nominalOrder, "10");
-		int scoreMax = Array.IndexOf<string>(Card.nominalOrder, "A");
-
-		evaluator.Begin (cardSet, card => card.Score >= scoreMin && card.Score <= scoreMax);
+		evaluator.Begin (cardSet, key => key.Nominal == "A");
 	}
 
 	public override void Evaluate(int index) {

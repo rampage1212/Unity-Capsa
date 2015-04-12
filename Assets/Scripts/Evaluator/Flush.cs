@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using CardSet = System.Collections.Generic.List<Card>;
 
 public class Flush : IEvaluator<Flush> {
 	CardSet spades = new CardSet();
@@ -28,7 +29,7 @@ public class Flush : IEvaluator<Flush> {
 			clubs.Add(cardSet[index]);
 			break;
 		case Card.Suit.Diamond:
-			clubs.Add(cardSet[index]);
+			diamonds.Add(cardSet[index]);
 			break;
 		}
 	}
@@ -44,7 +45,7 @@ public class Flush : IEvaluator<Flush> {
 
 	void FilterCards(CardSet cardSet) {
 		for (int i = 0; i < Mathf.Max(0, cardSet.Count - 4); ++i) {
-			CardSet set = cardSet.GetRange (i, 5) as CardSet; 
+			CardSet set = cardSet.GetRange (i, 5); 
 			if (filter(set[4]))
 				results.Add (new PokerHand(set, set[4], PokerHand.CombinationType.Flush));
 		}

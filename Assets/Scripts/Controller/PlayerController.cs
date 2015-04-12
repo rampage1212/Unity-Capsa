@@ -1,9 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using CardSet = System.Collections.Generic.List<Card>;
 
 [RequireComponent(typeof(PlayerView))]
 public class PlayerController : MonoBehaviour {
+	public int id = -1;
 	PlayerView view;
 	CardSet cards;
 
@@ -15,15 +17,24 @@ public class PlayerController : MonoBehaviour {
 	bool analyzeAllMatch = true;
 	System.Func<Card, bool> analyzeFilter = null;
 	PokerHand.CombinationType analyzeCombination = PokerHand.CombinationType.Invalid;
-	
+
+	public bool Artificial {
+		get { return id != 0; }
+	}
+
 	public CardSet Cards {
 		get { return cards; }
-		set { 
+		set {
 			cards = value; 
 			cards.Sort();
 			view.TotalCard = cards.Count;
-			view.Display (cards);
+// 			if (!Artificial)
+				view.Display (cards);
 		}
+	}
+
+	public PlayerView View {
+		get { return view; }
 	}
 
 	void Awake() {
@@ -32,15 +43,37 @@ public class PlayerController : MonoBehaviour {
 
 	public void OnTurnBegin() {
 		view.OnTurnBegin ();
+
+		analyzeCombination = PokerHand.CombinationType.Straight;
+		StartCoroutine ("Analyze");
 	}
 
 	public void OnTurnEnd() {
+		StopCoroutine ("Analyze");
 		view.OnTurnEnd ();
+	}
+
+	public void Deal() {
+		if (view.MarkedCards.Count == 0)
+			return;
+
+		PokerHand hand = PokerHand.Make (view.MarkedCards);
+		if (TrickController.Instance.Deal (hand)) {
+			for (int i = 0; i < view.MarkedCards.Count; ++i) {
+				view.MarkedCards [i].transform.SetParent (TrickController.Instance.transform.GetChild (id));
+				view.MarkedCards [i].button.interactable = false;
+				cards.Remove (view.MarkedCards [i]);
+			}
+			view.OnDealSuccess ();
+		} else {
+			view.OnDealFailed ();
+		}
 	}
 
 	IEnumerator Analyze() {
 		isAnalyzing = true;
 		hands.Clear ();
+		List<PokerHand> result;
 
 		// One analysis each frame
 		switch (analyzeCombination) {
@@ -54,60 +87,68 @@ public class PlayerController : MonoBehaviour {
 			hands.AddRange (Triple.Instance.LazyEvaluator (cards, analyzeAllMatch, analyzeFilter));
 			break;
 		case PokerHand.CombinationType.Straight:
-			hands.AddRange (Triple.Instance.LazyEvaluator (cards, analyzeAllMatch, analyzeFilter));
-			if (hands.Count > 0)
-				view.Straight = hands[hands.Count - 1].Cards;
+			result = Straight.Instance.LazyEvaluator (cards, analyzeAllMatch, analyzeFilter);
+			hands.AddRange (result);
+			if (result.Count > 0)
+				view.Straight = result[result.Count - 1].Cards;
 			if (!analyzeAllMatch && hands.Count > 0)
 				break;
 			yield return null;
 			goto case PokerHand.CombinationType.Flush;
 		case PokerHand.CombinationType.Flush:
-			hands.AddRange (Flush.Instance.LazyEvaluator (cards, analyzeAllMatch, analyzeFilter));
-			if (hands.Count > 0)
-				view.Flush = hands[hands.Count - 1].Cards;
+			result = Flush.Instance.LazyEvaluator (cards, analyzeAllMatch, analyzeFilter);
+			hands.AddRange (result);
+			if (result.Count > 0)
+				view.Flush = result[result.Count - 1].Cards;
 			if (!analyzeAllMatch && hands.Count > 0)
 				break;
 			yield return null;
 			goto case PokerHand.CombinationType.FullHouse;
 		case PokerHand.CombinationType.FullHouse:
-			hands.AddRange (FullHouse.Instance.LazyEvaluator (cards, analyzeAllMatch, analyzeFilter));
-			if (hands.Count > 0)
-				view.FullHouse = hands[hands.Count - 1].Cards;
+			result = FullHouse.Instance.LazyEvaluator (cards, analyzeAllMatch, analyzeFilter);
+			hands.AddRange (result);
+			if (result.Count > 0)
+				view.FullHouse = result[result.Count - 1].Cards;
 			if (!analyzeAllMatch && hands.Count > 0)
 				break;
 			yield return null;
 			goto case PokerHand.CombinationType.FourOfAKind;
 		case PokerHand.CombinationType.FourOfAKind:
-			hands.AddRange (FourOfAKind.Instance.LazyEvaluator (cards, analyzeAllMatch, analyzeFilter));
-			if (hands.Count > 0)
-				view.FourOfAKind = hands[hands.Count - 1].Cards;
+			result = FourOfAKind.Instance.LazyEvaluator (cards, analyzeAllMatch, analyzeFilter);
+			hands.AddRange (result);
+			if (result.Count > 0)
+				view.FourOfAKind = result[result.Count - 1].Cards;
 			if (!analyzeAllMatch && hands.Count > 0)
 				break;
 			yield return null;
 			goto case PokerHand.CombinationType.StraightFlush;
 		case PokerHand.CombinationType.StraightFlush:
-			hands.AddRange (StraightFlush.Instance.LazyEvaluator (cards, analyzeAllMatch, analyzeFilter));
-			if (hands.Count > 0)
-				view.StraightFlush = hands[hands.Count - 1].Cards;
+			result = StraightFlush.Instance.LazyEvaluator (cards, analyzeAllMatch, analyzeFilter);
+			hands.AddRange (result);
+			if (result.Count > 0)
+				view.StraightFlush = result[result.Count - 1].Cards;
 			if (!analyzeAllMatch && hands.Count > 0)
 				break;
 			yield return null;
 			goto case PokerHand.CombinationType.RoyalFlush;
 		case PokerHand.CombinationType.RoyalFlush:
-			hands.AddRange (RoyalFlush.Instance.LazyEvaluator (cards, analyzeAllMatch, analyzeFilter));
-			if (hands.Count > 0)
-				view.RoyalFlush = hands[hands.Count - 1].Cards;
+			result = RoyalFlush.Instance.LazyEvaluator (cards, analyzeAllMatch, analyzeFilter);
+			hands.AddRange (result);
+			if (result.Count > 0)
+				view.RoyalFlush = result[result.Count - 1].Cards;
 			if (!analyzeAllMatch && hands.Count > 0)
 				break;
 			yield return null;
 			goto case PokerHand.CombinationType.Dragon;
 		case PokerHand.CombinationType.Dragon:
-			hands.AddRange (Dragon.Instance.LazyEvaluator (cards, analyzeAllMatch, analyzeFilter));
-			if (hands.Count > 0)
-				view.Dragon = hands[hands.Count - 1].Cards;
+			result = Dragon.Instance.LazyEvaluator (cards, analyzeAllMatch, analyzeFilter);
+			hands.AddRange (result);
+			if (result.Count > 0)
+				view.Dragon = result[result.Count - 1].Cards;
 			break;
 		}
-
+		Debug.Log ("Finish Analyze : " + hands.Count);
 		view.Hint = hands.Count > 0 ? hands[0].Cards : null;
+		isAnalyzing = false;
 	}
 }

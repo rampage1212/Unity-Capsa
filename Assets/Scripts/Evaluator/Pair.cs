@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using CardSet = System.Collections.Generic.List<Card>;
 
 // Pair card with same number
 public class Pair : IEvaluator<Pair> {
@@ -10,10 +11,8 @@ public class Pair : IEvaluator<Pair> {
 			return;
 
 		Card [] pair = { cardSet [index], cardSet [index + 1] };
-		if (pair[0].Nominal == pair[1].Nominal && filter(pair[1])) {
-			var set = new CardSet();
-			set.AddRange(pair);
-			results.Add(new PokerHand(set, set[1], PokerHand.CombinationType.Pair));
+		if (pair[0].Score == pair[1].Score && filter(pair[1])) {
+			results.Add(new PokerHand(new CardSet(pair), pair[1], PokerHand.CombinationType.Pair));
 		}
 	}
 
@@ -21,6 +20,6 @@ public class Pair : IEvaluator<Pair> {
 		if (cards.Count != 2)
 			return false;
 
-		return cards [0].Nominal == cards [1].Nominal;
+		return cards [0].Score == cards [1].Score;
 	}
 }

@@ -18,8 +18,16 @@ public class Card : MonoBehaviour, IComparable<Card> {
 	int _score;
 	string _nominal;
 
-	DeckController deck;
+	PlayerController owner;
 	Image image;
+
+	public PlayerController Owner {
+		get {
+			if (owner == null)
+				owner = GetComponentInParent<PlayerController> ();
+			return owner;
+		}
+	}
 
 	public string Nominal {
 		set {
@@ -36,30 +44,32 @@ public class Card : MonoBehaviour, IComparable<Card> {
 		get { return _score; }
 	}
 
-	void Start () {
-		deck = GetComponentInParent<DeckController> ();
+	void Awake () {
 		button = GetComponent<Button> ();
 		image = transform.GetChild(0).GetComponent<Image> ();
+	}
+
+	void Start() {
 		image.sprite = SpriteCollection.From("playingCards").Get(suit.ToString() + "_" + _nominal);
 	}
 
 	public void ToggleSelect(){
 		if (image.rectTransform.anchoredPosition == Vector2.zero) {
 			image.rectTransform.anchoredPosition = new Vector2 (0, 20);
-			deck.Select(this);
+			Owner.View.OnCardMarked(this);
 		} else {
 			image.rectTransform.anchoredPosition = Vector2.zero;
-			deck.Deselect(this);
+			Owner.View.OnCardUnmarked(this);
 		}
 	}
 
 	public void Select(bool flag){
 		if (flag) {
 			image.rectTransform.anchoredPosition = new Vector2 (0, 20);
-			deck.Select(this);
+			Owner.View.OnCardMarked(this);
 		} else {
 			image.rectTransform.anchoredPosition = Vector2.zero;
-			deck.Deselect(this);
+			Owner.View.OnCardUnmarked(this);
 		} 
 	}
 
@@ -78,5 +88,3 @@ public class Card : MonoBehaviour, IComparable<Card> {
 			return this._score - other._score;
 	}
 }
-
-public class CardSet : List<Card> {}

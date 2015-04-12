@@ -1,13 +1,16 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using CardSet = System.Collections.Generic.List<Card>;
 
 public class PlayerView : MonoBehaviour {
-	public GameObject controlIndicator;
+	public GameObject panel;
 	public GameObject passIndicator;
 	public Text labelTimer;
 	public Text labelCount;
 	public QuickBarHelper quickbar;
+
+	PlayerController controller;
 
 	// Card Collection
 	CardSet straight;
@@ -22,6 +25,10 @@ public class PlayerView : MonoBehaviour {
 	PokerHand.CombinationType lastMarkCombination = PokerHand.CombinationType.Invalid;
 	CardSet markedCards = new CardSet();
 
+	void Awake(){
+		controller = GetComponent<PlayerController> ();
+	}
+
 	// Helper Events for controller
 	public void OnCardMarked(Card card) {
 		markedCards.Add (card);
@@ -34,18 +41,25 @@ public class PlayerView : MonoBehaviour {
 	}
 
 	public void OnTurnBegin() {
-		if (controlIndicator)
-			controlIndicator.SetActive (true);
+		if (panel)
+			panel.SetActive (true);
 		if (passIndicator)
 			passIndicator.SetActive (false);
 	}
 
 	public void OnTurnEnd() {
-		if (controlIndicator)
-			controlIndicator.SetActive (false);
+		if (panel)
+			panel.SetActive (false);
 		
 		if (quickbar) 
 			quickbar.Interactable = false;
+	}
+
+	public void OnDealSuccess() {
+		markedCards.Clear ();
+	}
+
+	public void OnDealFailed() {
 	}
 
 	// Helper events for interface
@@ -92,8 +106,8 @@ public class PlayerView : MonoBehaviour {
 	void MarkAll(CardSet set, bool reset) {
 		// Deselect all
 		if (reset) {
-			for (int i = 0; i < markedCards.Count; ++i) {
-				markedCards [i].Select (false);
+			for (int i = 0; i < controller.Cards.Count; ++i) {
+				controller.Cards [i].Select (false);
 			}
 		}
 		
