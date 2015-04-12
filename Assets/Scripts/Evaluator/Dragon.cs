@@ -5,6 +5,7 @@ public class Dragon : IEvaluator<Dragon> {
 	CardSet dragon = new CardSet();
 
 	protected override void PreEvaluate () {
+		dragon.Clear ();
 		dragon.Add (cardSet [0]);
 	}
 

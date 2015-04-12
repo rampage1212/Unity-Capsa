@@ -7,6 +7,13 @@ public class Flush : IEvaluator<Flush> {
 	CardSet clubs = new CardSet();
 	CardSet diamonds = new CardSet();
 
+	protected override void PreEvaluate () {
+		spades.Clear ();
+		hearts.Clear ();
+		clubs.Clear ();
+		diamonds.Clear ();
+	}
+
 	public override void Evaluate(int index) {
 		switch (cardSet [index].suit) {
 		case Card.Suit.Spade:
