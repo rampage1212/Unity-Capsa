@@ -28,7 +28,7 @@ public class PlayerController : MonoBehaviour {
 			cards = value; 
 			cards.Sort();
 			view.TotalCard = cards.Count;
-// 			if (!Artificial)
+ 			if (!Artificial)
 				view.Display (cards);
 		}
 	}
@@ -44,7 +44,11 @@ public class PlayerController : MonoBehaviour {
 	public void OnTurnBegin() {
 		view.OnTurnBegin ();
 
-		analyzeCombination = PokerHand.CombinationType.Straight;
+		var LastTrick = TrickController.Instance.LastTrick;
+		if (LastTrick != null) {
+			analyzeCombination = LastTrick.Combination;
+			analyzeFilter = trick => trick > LastTrick.Key;
+		}
 		StartCoroutine ("OnTurn");
 		StartCoroutine ("Analyze");
 	}
@@ -54,38 +58,51 @@ public class PlayerController : MonoBehaviour {
 		float lastUpdateTime = Time.time;
 
 		while (time > 0f) {
+			yield return new WaitForSeconds(0.1f);
+
 			time -= (Time.time - lastUpdateTime);
 			lastUpdateTime = Time.time;
 			view.TimeLeft = time;
 
-			yield return null;
+			if (Artificial && !isAnalyzing){
+				if (hands.Count > 0) {
+					Deal(hands[0]);
+				} else {
+					yield return new WaitForSeconds(0.5f);
+					break;
+				}
+			}
 		}
 		
 		// Timeout
-		TrickController.Instance.Pass ();
+		Pass ();
 	}
 
 	public void OnTurnEnd() {
 		StopCoroutine ("Analyze");
 		StopCoroutine ("OnTurn");
+
 		view.OnTurnEnd ();
 	}
 
-	public void Deal() {
-		if (view.MarkedCards.Count == 0)
+	public void Deal(CardSet dealCards) {
+		if (dealCards.Count == 0)
 			return;
 
-		PokerHand hand = PokerHand.Make (view.MarkedCards);
+		PokerHand hand = PokerHand.Make (dealCards);
 		if (TrickController.Instance.Deal (hand)) {
-			for (int i = 0; i < view.MarkedCards.Count; ++i) {
-				view.MarkedCards [i].transform.SetParent (TrickController.Instance.transform.GetChild (id));
-				view.MarkedCards [i].button.interactable = false;
-				cards.Remove (view.MarkedCards [i]);
-			}
 			view.OnDealSuccess ();
 		} else {
 			view.OnDealFailed ();
 		}
+	}
+
+	public void Deal(PokerHand hand) {
+		if (TrickController.Instance.Deal (hand)) {
+			view.OnDealSuccess ();
+		} else {
+			view.OnDealFailed ();
+		}	
 	}
 
 	public void Pass() {
@@ -100,14 +117,25 @@ public class PlayerController : MonoBehaviour {
 
 		// One analysis each frame
 		switch (analyzeCombination) {
+		case PokerHand.CombinationType.Invalid:
+			goto case PokerHand.CombinationType.One;
 		case PokerHand.CombinationType.One:
 			hands.AddRange (One.Instance.LazyEvaluator (cards, analyzeAllMatch, analyzeFilter));
+
+			if (analyzeCombination == PokerHand.CombinationType.Invalid)
+				goto case PokerHand.CombinationType.Pair;
 			break;
 		case PokerHand.CombinationType.Pair:
 			hands.AddRange (Pair.Instance.LazyEvaluator (cards, analyzeAllMatch, analyzeFilter));
+			
+			if (analyzeCombination == PokerHand.CombinationType.Invalid)
+				goto case PokerHand.CombinationType.Triple;
 			break;
 		case PokerHand.CombinationType.Triple:
 			hands.AddRange (Triple.Instance.LazyEvaluator (cards, analyzeAllMatch, analyzeFilter));
+			
+			if (analyzeCombination == PokerHand.CombinationType.Invalid)
+				goto case PokerHand.CombinationType.Straight;
 			break;
 		case PokerHand.CombinationType.Straight:
 			result = Straight.Instance.LazyEvaluator (cards, analyzeAllMatch, analyzeFilter);
@@ -170,8 +198,10 @@ public class PlayerController : MonoBehaviour {
 				view.Dragon = result[result.Count - 1].Cards;
 			break;
 		}
-		Debug.Log ("Finish Analyze : " + hands.Count);
+
 		view.Hint = hands.Count > 0 ? hands[0].Cards : null;
 		isAnalyzing = false;
+		analyzeFilter = null;
+		analyzeCombination = PokerHand.CombinationType.Invalid;
 	}
 }

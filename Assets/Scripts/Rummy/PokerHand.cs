@@ -59,7 +59,7 @@ public class PokerHand : IComparable<PokerHand> {
 				combination = CombinationType.Invalid;
 		}
 
-		return new PokerHand (cards, key, combination);
+		return new PokerHand (new CardSet(cards.ToArray()), key, combination);
 	}
 
 	public Card Key {

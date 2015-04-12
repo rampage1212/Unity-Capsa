@@ -51,12 +51,17 @@ public class PlayerView : MonoBehaviour {
 		if (panel)
 			panel.SetActive (false);
 		
-		if (quickbar) 
+		if (quickbar)
 			quickbar.Interactable = false;
+	}
+
+	public void OnDeal() {
+		controller.Deal (markedCards);
 	}
 
 	public void OnDealSuccess() {
 		markedCards.Clear ();
+		this.TotalCard = controller.Cards.Count;
 	}
 
 	public void OnDealFailed() {
@@ -108,6 +113,9 @@ public class PlayerView : MonoBehaviour {
 	}
 
 	void MarkAll(CardSet set, bool reset) {
+		if (set == null)
+			return;
+
 		// Deselect all
 		if (reset) {
 			for (int i = 0; i < controller.Cards.Count; ++i) {

@@ -14,7 +14,6 @@ public class TrickController : MonoBehaviour {
 	int lastTurnPlayer;
 	int passPlayer;
 	bool firstTurn = true;
-	bool isGameOver = false;
 
 	// Singleton
 	private static TrickController instance;
@@ -23,6 +22,18 @@ public class TrickController : MonoBehaviour {
 			if(instance == null)
 				instance = GameObject.FindObjectOfType<TrickController>();
 			return instance;
+		}
+	}
+
+	public PokerHand LastTrick {
+		get {
+			return tricks.Count > 0 ? tricks[tricks.Count - 1] : null;
+		}
+	}
+
+	public int CurrentPlayer {
+		get {
+			return nextTurnPlayer == 0 ? players.Count - 1 : nextTurnPlayer - 1;
 		}
 	}
 
@@ -66,7 +77,7 @@ public class TrickController : MonoBehaviour {
 			// If have '3 diamond' card, play first turn
 			var firstCard = players[i].Cards[0];
 			if (firstCard.Nominal == "3" && firstCard.suit == Card.Suit.Diamond) {
-//				nextTurnPlayer = lastTurnPlayer = i;
+				nextTurnPlayer = lastTurnPlayer = i;
 			}
 		}
 		OnBeginTrick ();
@@ -87,7 +98,7 @@ public class TrickController : MonoBehaviour {
 	void OnEndTrick() {
 		// Empty Cards
 		for (int i = 0; i < tricks.Count; ++i){
-			for (int c = 0; c <tricks[i].Cards.Count; ++c){
+			for (int c = 0; c < tricks[i].Cards.Count; ++c){
 				Destroy(tricks[i].Cards[c].gameObject);
 			}
 		}
@@ -97,9 +108,16 @@ public class TrickController : MonoBehaviour {
 	}
 
 	void NextTurn() {
-		var current = nextTurnPlayer == 0 ? players.Count - 1 : nextTurnPlayer - 1;	
+		var current = CurrentPlayer;	
 		players [current].OnTurnEnd ();
-		
+
+		// Stop game if one player already spent all his cards
+		Debug.Log (current + " => " + players [current].Cards.Count);
+		if (players [current].Cards.Count == 0) {
+			OnGameOver();
+			return;
+		}
+
 		while (players[nextTurnPlayer].Cards.Count <= 0) {
 			nextTurnPlayer = nextTurnPlayer + 1 >= players.Count ? 0 : nextTurnPlayer + 1;
 		}
@@ -107,6 +125,12 @@ public class TrickController : MonoBehaviour {
 		players [nextTurnPlayer].OnTurnBegin ();
 		
 		nextTurnPlayer = nextTurnPlayer + 1 >= players.Count ? 0 : nextTurnPlayer + 1;
+		firstTurn = false;
+	}
+
+	void OnGameOver() {
+		Debug.Log ("GameOver");
+		view.OnGameOver ();
 	}
 
 	public void Pass() {
@@ -119,6 +143,14 @@ public class TrickController : MonoBehaviour {
 	}
 
 	public bool Deal(PokerHand hand) {
+		System.Action TakeCards = () => {
+			for (int i = 0; i < hand.Cards.Count; ++i) {
+				hand.Cards [i].transform.SetParent (TrickController.Instance.transform.GetChild (CurrentPlayer));
+				hand.Cards [i].button.interactable = false;
+				players [CurrentPlayer].Cards.Remove (hand.Cards [i]);
+			}
+		};
+
 		if (hand.Cards.Count == 0 || hand.Combination == PokerHand.CombinationType.Invalid) {
 			view.NotifyMessage ("Invalid deal!");
 			return false;
@@ -128,12 +160,12 @@ public class TrickController : MonoBehaviour {
 			view.NotifyMessage ("Must include 3 Diamond");
 			return false;
 		}
-		firstTurn = false;
 		
 		// Initialize Tricks if still empty
 		if (tricks.Count == 0) {
 			tricks.Add (hand);
 			lastTurnPlayer = nextTurnPlayer == 0 ? players.Count - 1 : nextTurnPlayer - 1;
+			TakeCards ();
 			NextTurn ();
 			return true;
 		} else {
@@ -144,6 +176,7 @@ public class TrickController : MonoBehaviour {
 				if (hand.Combination == last.Combination && hand.Key > last.Key) {
 					tricks.Add (hand);
 					lastTurnPlayer = nextTurnPlayer == 0 ? players.Count - 1 : nextTurnPlayer - 1;
+					TakeCards ();
 					NextTurn ();
 					return true;
 				}
@@ -152,12 +185,12 @@ public class TrickController : MonoBehaviour {
 				if (hand > last) {
 					tricks.Add (hand);
 					lastTurnPlayer = nextTurnPlayer == 0 ? players.Count - 1 : nextTurnPlayer - 1;
+					TakeCards ();
 					NextTurn ();
 					return true;
 				}
-			} else {
-				view.NotifyMessage("Card Too Small or Combination is different");
 			}
+			view.NotifyMessage(hand.Combination + " " + hand.Key.Nominal + "!= or <" + LastTrick.Combination + " " + LastTrick.Key.Nominal);
 			return false;
 		}
 	}
