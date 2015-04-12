@@ -33,14 +33,14 @@ public class PlayerView : MonoBehaviour {
 		lastMarkCombination = PokerHand.CombinationType.Invalid;
 	}
 
-	public void OnTrickBegin() {
+	public void OnTurnBegin() {
 		if (controlIndicator)
 			controlIndicator.SetActive (true);
 		if (passIndicator)
 			passIndicator.SetActive (false);
 	}
 
-	public void OnTrickEnd() {
+	public void OnTurnEnd() {
 		if (controlIndicator)
 			controlIndicator.SetActive (false);
 		

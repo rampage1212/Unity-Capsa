@@ -15,18 +15,27 @@ public class PlayerController : MonoBehaviour {
 	bool analyzeAllMatch = true;
 	System.Func<Card, bool> analyzeFilter = null;
 	PokerHand.CombinationType analyzeCombination = PokerHand.CombinationType.Invalid;
-
-	void Awake() {
-		view = GetComponent<PlayerView> ();
-	}
-
+	
 	public CardSet Cards {
+		get { return cards; }
 		set { 
 			cards = value; 
 			cards.Sort();
 			view.TotalCard = cards.Count;
 			view.Display (cards);
 		}
+	}
+
+	void Awake() {
+		view = GetComponent<PlayerView> ();
+	}
+
+	public void OnTurnBegin() {
+		view.OnTurnBegin ();
+	}
+
+	public void OnTurnEnd() {
+		view.OnTurnEnd ();
 	}
 
 	IEnumerator Analyze() {
