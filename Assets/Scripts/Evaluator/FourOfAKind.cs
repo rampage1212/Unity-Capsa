@@ -2,6 +2,8 @@ using System.Collections;
 
 public class FourOfAKind : IEvaluator<FourOfAKind> {
 	public override void Evaluate(int index) {
+		base.Evaluate (index);
+
 		// 5 card is needed at least and Max index is (n-1) - 3, don't evaluate
 		if (cardSet.Count < 5 || index > cardSet.Count - 3)
 			return;
@@ -14,5 +16,16 @@ public class FourOfAKind : IEvaluator<FourOfAKind> {
 			set.AddRange(quad);
 			results.Add(new PokerHand(set, set[4], PokerHand.CombinationType.FourOfAKind));
 		}
+	}
+	
+	public override bool IsValid(CardSet cards, bool isSorted = false) { 
+		if (cards.Count != 5)
+			return false;
+
+		if (!isSorted)
+			cards.Sort ();
+
+		return cards[0].Nominal == cards[3].Nominal
+			|| cards[1].Nominal == cards[4].Nominal;
 	}
 }

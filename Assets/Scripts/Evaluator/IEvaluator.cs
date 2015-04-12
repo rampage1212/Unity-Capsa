@@ -79,4 +79,8 @@ public class IEvaluator<T> where T : class, new() {
 		End ();
 		return Results;
 	}
+
+	public virtual bool IsValid(CardSet cards, bool isSorted = false) { 
+		return cards.Count > 0;
+	}
 }

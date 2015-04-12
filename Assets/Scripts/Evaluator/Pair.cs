@@ -3,6 +3,8 @@
 // Pair card with same number
 public class Pair : IEvaluator<Pair> {
 	public override void Evaluate(int index) {
+		base.Evaluate (index);
+
 		// Max index is (n-1) - 1, don't evaluate
 		if (index > cardSet.Count - 2)
 			return;
@@ -13,5 +15,12 @@ public class Pair : IEvaluator<Pair> {
 			set.AddRange(pair);
 			results.Add(new PokerHand(set, set[1], PokerHand.CombinationType.Pair));
 		}
+	}
+
+	public override bool IsValid(CardSet cards, bool isSorted = false) { 
+		if (cards.Count != 2)
+			return false;
+
+		return cards [0].Nominal == cards [1].Nominal;
 	}
 }

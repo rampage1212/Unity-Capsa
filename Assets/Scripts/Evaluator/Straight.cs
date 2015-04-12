@@ -78,4 +78,18 @@ public class Straight : IEvaluator<Straight> {
 			}
 		}
 	}
+
+	public override bool IsValid(CardSet cards, bool isSorted = false) { 
+		if (cards.Count != 5)
+			return false;
+
+		if (!isSorted)
+			cards.Sort ();
+		for (int i = 0; i < cards.Count - 1; ++i) {
+			if (cards[i].Score + 1 != cards[i + 1].Score)
+				return false;
+		}
+		
+		return true;
+	}
 }

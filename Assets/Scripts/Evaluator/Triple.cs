@@ -15,4 +15,12 @@ public class Triple : IEvaluator<Triple> {
 			results.Add(new PokerHand(set, set[2], PokerHand.CombinationType.Triple));
 		}
 	}
+	
+	public override bool IsValid(CardSet cards, bool isSorted = false) { 
+		if (cards.Count != 3)
+			return false;
+		
+		return cards [0].Nominal == cards [1].Nominal
+			&& cards [1].Nominal == cards [2].Nominal;
+	}
 }

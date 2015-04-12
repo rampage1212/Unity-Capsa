@@ -45,4 +45,8 @@ public class StraightFlush : IEvaluator<StraightFlush> {
 
 		results.Sort ();
 	}
+	
+	public override bool IsValid(CardSet cards, bool isSorted = false) { 
+		return Flush.Instance.IsValid(cards, isSorted) && Straight.Instance.IsValid(cards, isSorted);
+	}
 }

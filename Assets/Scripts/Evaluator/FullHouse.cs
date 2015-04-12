@@ -21,6 +21,8 @@ public class FullHouse : IEvaluator<FullHouse> {
 	}
 
 	public override void Evaluate(int index) {
+		base.Evaluate (index);
+
 		// Do nothing if triples and pairs is specified manually
 		if (triples != null || pairs != null)
 			return;
@@ -60,5 +62,16 @@ public class FullHouse : IEvaluator<FullHouse> {
 		// Reset triples and pairs variable
 		triples = null;
 		pairs = null;
+	}
+	
+	public override bool IsValid(CardSet cards, bool isSorted = false) { 
+		if (cards.Count != 5)
+			return false;
+	
+		if (!isSorted)
+			cards.Sort ();
+		
+		return cards[0].Nominal == cards[1].Nominal && cards[1].Nominal == cards[2].Nominal && cards[3].Nominal == cards[4].Nominal
+			|| cards[0].Nominal == cards[1].Nominal && cards[2].Nominal == cards[3].Nominal && cards[3].Nominal == cards[4].Nominal;
 	}
 }

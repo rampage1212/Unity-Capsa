@@ -8,4 +8,8 @@ public class Single : IEvaluator<Single> {
 			results.Add(new PokerHand(set, set[0], PokerHand.CombinationType.Single));
 		}
 	}
+
+	public override bool IsValid(CardSet cards, bool isSorted = false) { 
+		return cards.Count == 1;
+	}
 }
