@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class CardSet : List<Card> {}
 
-public abstract class IEvaluator<T> where T : class, new() {
+public class IEvaluator<T> where T : class, new() {
 	// This singleton doens't protect derived class from being intantiated using new, but at least it's bring convenience
 	private static T sInstance = new T();
 	public static T Instance { 
@@ -39,9 +39,10 @@ public abstract class IEvaluator<T> where T : class, new() {
 		cardSet = cards;
 		filter = filterFunction != null ? filterFunction : any => true;
 
-		if (cardSet == null) {
+		if (cardSet == null)
 			Debug.LogException(new Exception("CardSet is null"));
-		}
+		if (cardSet.Count == 0)
+			Debug.LogException (new Exception("Cannot evaluate empty cardset"));
 
 		PreEvaluate ();
 	}

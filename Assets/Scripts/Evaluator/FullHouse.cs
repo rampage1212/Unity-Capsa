@@ -9,7 +9,7 @@ public class FullHouse : IEvaluator<FullHouse> {
 
 	protected override void PreEvaluate () {
 		// Do nothing if triples and pairs is specified manually
-		if (triples == null && pairs == null)
+		if (triples != null || pairs != null)
 			return;
 
 		// Begin Pair and Triple evaluation
@@ -19,7 +19,7 @@ public class FullHouse : IEvaluator<FullHouse> {
 
 	public override void Evaluate(int index) {
 		// Do nothing if triples and pairs is specified manually
-		if (triples == null && pairs == null)
+		if (triples != null || pairs != null)
 			return;
 
 		// Evaluate each card
@@ -33,10 +33,11 @@ public class FullHouse : IEvaluator<FullHouse> {
 			// End Pair and Triple evaluation
 			Pair.Instance.End ();
 			Triple.Instance.End ();
-		}
 
-		pairs = Pair.Instance.Results;
-		triples = Triple.Instance.Results;
+			// Get the result of the evaluation
+			pairs = Pair.Instance.Results;
+			triples = Triple.Instance.Results;
+		}
 
 		// Build the result
 		CardSet fullHouse = new CardSet ();
