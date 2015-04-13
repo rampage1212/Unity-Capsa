@@ -14,6 +14,13 @@ public class SceneView : MonoBehaviour {
 		controller = GetComponent<SceneController> ();
 	}
 
+	void Update() {
+		if (Application.loadedLevel == 0) {
+			if (Input.GetKeyDown(KeyCode.Escape)) 
+				Application.Quit(); 
+		}
+	}
+
 	public void OnMenuSceneLoaded() {
 		player1.sprite = controller.avatars [0].normal;
 		player2.sprite = controller.avatars [1].normal;
