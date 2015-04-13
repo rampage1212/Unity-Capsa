@@ -5,19 +5,19 @@ using CardSet = System.Collections.Generic.List<Card>;
 
 public class PlayerView : MonoBehaviour {
 	[System.Serializable]
-	public class Avatar {
+	public class AvatarSet {
 		public Sprite normal;
 		public Sprite happy;
 		public Sprite sad;
 	}
 
 	public Image avatar_image;
-	public Avatar avatar;
 	public GameObject panel;
 	public GameObject passIndicator;
 	public Text labelTimer;
 	public Text labelCount;
 	public QuickBarView quickbar;
+	AvatarSet avatar;
 
 	PlayerController controller;
 
@@ -36,10 +36,6 @@ public class PlayerView : MonoBehaviour {
 
 	void Awake(){
 		controller = GetComponent<PlayerController> ();
-	}
-
-	void Start(){
-		avatar_image.sprite = avatar.normal;
 	}
 
 	// Helper Events for controller
@@ -219,8 +215,16 @@ public class PlayerView : MonoBehaviour {
 			if (quickbar) quickbar.dragon.interactable = true;
 		}
 	}
+
 	public CardSet Hint {
 		get { return hint; }
 		set { hint = value; }
+	}
+
+	public AvatarSet Avatar {
+		set { 
+			avatar = value;
+			avatar_image.sprite = avatar.normal;
+		}
 	}
 }

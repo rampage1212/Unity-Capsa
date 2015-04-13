@@ -71,9 +71,12 @@ public class TrickController : MonoBehaviour {
 		var set = new CardSet ();
 		set.AddRange (allCard);
 		for (int i = 0; i < players.Count; ++i) {
+			int avatarId = SceneController.Instance.playerAvatarId;
+			avatarId = avatarId + i >= players.Count ? Mathf.Abs(avatarId - i) : avatarId + i;
 			players[i].id = i;
 			players[i].Cards = set.GetRange(i * 13, 13);
-			
+			players[i].View.Avatar = SceneController.Instance.avatars[avatarId];
+
 			// If have '3 diamond' card, play first turn
 			var firstCard = players[i].Cards[0];
 			if (firstCard.Nominal == "3" && firstCard.suit == Card.Suit.Diamond) {
