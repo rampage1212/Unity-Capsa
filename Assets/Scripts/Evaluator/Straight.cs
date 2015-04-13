@@ -84,8 +84,41 @@ public class Straight : IEvaluator<Straight> {
 		if (cards.Count != 5)
 			return false;
 
-		if (!isSorted)
+		if (!isSorted) {
+			// Special Case
+			if (cards [0].Nominal == "2" 
+				&& cards [1].Nominal == "3" 
+				&& cards [2].Nominal == "4" 
+				&& cards [3].Nominal == "5" 
+				&& cards [4].Nominal == "6")
+				return true;
+
+			if (cards [0].Nominal == "A" 
+				&& cards [1].Nominal == "2" 
+				&& cards [2].Nominal == "3" 
+				&& cards [3].Nominal == "4" 
+				&& cards [4].Nominal == "5")
+				return true;
+
 			cards.Sort ();
+		} else {
+			// Special Case
+			if (cards [0].Nominal == "3" 
+			    && cards [1].Nominal == "4" 
+			    && cards [2].Nominal == "5" 
+			    && cards [3].Nominal == "6" 
+			    && cards [4].Nominal == "2")
+				return true;
+			
+			if (cards [0].Nominal == "3" 
+			    && cards [1].Nominal == "4" 
+			    && cards [2].Nominal == "5" 
+			    && cards [3].Nominal == "A" 
+			    && cards [4].Nominal == "2")
+				return true;
+		}
+
+		// Normal case
 		for (int i = 0; i < cards.Count - 1; ++i) {
 			if (cards[i].Score + 1 != cards[i + 1].Score)
 				return false;

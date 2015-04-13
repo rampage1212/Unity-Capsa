@@ -56,13 +56,14 @@ public class PlayerView : MonoBehaviour {
 			passIndicator.SetActive (false);
 		avatar_image.sprite = avatar.normal;
 	}
-
+	
 	public void OnTurnEnd() {
 		if (panel)
 			panel.SetActive (false);
-		
 		if (quickbar)
 			quickbar.Interactable = false;
+		if (passIndicator)
+			passIndicator.SetActive (false);
 	}
 
 	public void OnDeal() {
@@ -79,7 +80,7 @@ public class PlayerView : MonoBehaviour {
 	}
 
 	public void OnPass() {
-		passIndicator.SetActive (true);
+		passIndicator.SetActive (controller.IsPass);
 		avatar_image.sprite = avatar.sad;
 	}
 
@@ -222,6 +223,7 @@ public class PlayerView : MonoBehaviour {
 	}
 
 	public AvatarSet Avatar {
+		get { return avatar; }
 		set { 
 			avatar = value;
 			avatar_image.sprite = avatar.normal;

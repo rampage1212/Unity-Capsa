@@ -28,18 +28,22 @@ public class TrickView : MonoBehaviour {
 
 		resultPanel = resultPanel.transform.GetChild (0).gameObject;
 		var p = resultPanel.transform.FindChild ("Player 1");
+		p.transform.FindChild ("Avatar").GetComponent<Image> ().sprite = controller.players [0].View.Avatar.normal;
 		p.transform.FindChild ("Card").GetComponent<Text> ().text = controller.players [0].Cards.Count.ToString ();
 		p.transform.FindChild ("Points").GetComponent<Text> ().text = GetPoint (0).ToString();
 
 		p = resultPanel.transform.FindChild ("Player 2");
+		p.transform.FindChild ("Avatar").GetComponent<Image> ().sprite = controller.players [1].View.Avatar.normal;
 		p.transform.FindChild ("Card").GetComponent<Text> ().text = controller.players [1].Cards.Count.ToString ();
 		p.transform.FindChild ("Points").GetComponent<Text> ().text = GetPoint (1).ToString();
 
 		p = resultPanel.transform.FindChild ("Player 3");
+		p.transform.FindChild ("Avatar").GetComponent<Image> ().sprite = controller.players [2].View.Avatar.normal;
 		p.transform.FindChild ("Card").GetComponent<Text> ().text = controller.players [2].Cards.Count.ToString ();
 		p.transform.FindChild ("Points").GetComponent<Text> ().text = GetPoint (2).ToString();
 
 		p = resultPanel.transform.FindChild ("Player 4");
+		p.transform.FindChild ("Avatar").GetComponent<Image> ().sprite = controller.players [3].View.Avatar.normal;
 		p.transform.FindChild ("Card").GetComponent<Text> ().text = controller.players [3].Cards.Count.ToString ();
 		p.transform.FindChild ("Points").GetComponent<Text> ().text = GetPoint (3).ToString();
 

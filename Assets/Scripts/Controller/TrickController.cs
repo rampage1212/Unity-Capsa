@@ -37,6 +37,10 @@ public class TrickController : MonoBehaviour {
 		}
 	}
 
+	public bool IsFirstTurn {
+		get { return firstTurn; }
+	}
+
 	void Awake() {
 		view = GetComponent<TrickView> ();
 	}
@@ -88,8 +92,10 @@ public class TrickController : MonoBehaviour {
 
 	void OnBeginTrick() {		
 		// Reset all player state
-		for (int i = 0; i < players.Count; ++i)
-			players[i].OnTurnEnd ();
+		for (int i = 0; i < players.Count; ++i) {
+			players [i].OnTurnEnd ();
+			players [i].IsPass = false;
+		}
 		
 		passPlayer = 0;
 		nextTurnPlayer = lastTurnPlayer;
@@ -115,20 +121,18 @@ public class TrickController : MonoBehaviour {
 		players [current].OnTurnEnd ();
 
 		// Stop game if one player already spent all his cards
-		Debug.Log (current + " => " + players [current].Cards.Count);
 		if (players [current].Cards.Count == 0) {
 			OnGameOver();
 			return;
 		}
 
-		while (players[nextTurnPlayer].Cards.Count <= 0) {
+		while (players[nextTurnPlayer].IsPass) {
 			nextTurnPlayer = nextTurnPlayer + 1 >= players.Count ? 0 : nextTurnPlayer + 1;
 		}
 		
 		players [nextTurnPlayer].OnTurnBegin ();
 		
 		nextTurnPlayer = nextTurnPlayer + 1 >= players.Count ? 0 : nextTurnPlayer + 1;
-		firstTurn = false;
 	}
 
 	void OnGameOver() {
@@ -143,6 +147,7 @@ public class TrickController : MonoBehaviour {
 			NextTurn ();
 		else
 			OnEndTrick ();
+		firstTurn = false;
 	}
 
 	public bool Deal(PokerHand hand) {
@@ -152,6 +157,7 @@ public class TrickController : MonoBehaviour {
 				hand.Cards [i].button.interactable = false;
 				players [CurrentPlayer].Cards.Remove (hand.Cards [i]);
 			}
+			firstTurn = false;
 		};
 
 		if (hand.Cards.Count == 0 || hand.Combination == PokerHand.CombinationType.Invalid) {
@@ -159,7 +165,7 @@ public class TrickController : MonoBehaviour {
 			return false;
 		}
 		
-		if (firstTurn && hand.Cards [0].Nominal != "3" && hand.Cards [0].suit != Card.Suit.Diamond) {
+		if (firstTurn && !(hand.Cards [0].Nominal == "3" && hand.Cards [0].suit == Card.Suit.Diamond)) {
 			view.NotifyMessage ("Must include 3 Diamond");
 			return false;
 		}

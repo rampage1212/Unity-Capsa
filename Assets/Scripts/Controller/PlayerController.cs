@@ -8,6 +8,7 @@ public class PlayerController : MonoBehaviour {
 	public int id = -1;
 	PlayerView view;
 	CardSet cards;
+	bool isPass = false;
 
 	// Possible Poker Hand Combinations
 	List<PokerHand> hands = new List<PokerHand>(13);
@@ -35,6 +36,14 @@ public class PlayerController : MonoBehaviour {
 
 	public PlayerView View {
 		get { return view; }
+	}
+
+	public bool IsPass {
+		get { return isPass; }
+		set { 
+			isPass = value;
+			view.passIndicator.SetActive (isPass);
+		}
 	}
 
 	void Awake() {
@@ -66,16 +75,21 @@ public class PlayerController : MonoBehaviour {
 
 			if (Artificial && !isAnalyzing){
 				if (hands.Count > 0) {
-					Deal(hands[0]);
+					if (!IsInvoking("AutoDeal")) {
+						Invoke("AutoDeal", Random.Range(view.Hint.Count * 0.5f, view.Hint.Count * 2.5f));
+					}
 				} else {
 					yield return new WaitForSeconds(0.5f);
 					break;
 				}
 			}
 		}
-		
-		// Timeout
-		Pass ();
+		if (!Artificial && TrickController.Instance.IsFirstTurn) {
+			AutoDeal();
+		} else {
+			// Timeout
+			Pass ();
+		}
 	}
 
 	public void OnTurnEnd() {
@@ -83,6 +97,10 @@ public class PlayerController : MonoBehaviour {
 		StopCoroutine ("OnTurn");
 
 		view.OnTurnEnd ();
+	}
+
+	public void AutoDeal() {
+		Deal (view.Hint);
 	}
 
 	public void Deal(CardSet dealCards) {
@@ -106,6 +124,7 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	public void Pass() {
+		isPass = true;
 		TrickController.Instance.Pass ();
 		view.OnPass ();
 	}
@@ -120,7 +139,7 @@ public class PlayerController : MonoBehaviour {
 		case PokerHand.CombinationType.Invalid:
 			goto case PokerHand.CombinationType.One;
 		case PokerHand.CombinationType.One:
-			hands.AddRange (One.Instance.LazyEvaluator (cards, analyzeAllMatch, analyzeFilter));
+			hands.AddRange (One.Instance.LazyEvaluator (cards, false, analyzeFilter));
 
 			if (analyzeCombination == PokerHand.CombinationType.Invalid)
 				goto case PokerHand.CombinationType.Pair;
@@ -199,7 +218,27 @@ public class PlayerController : MonoBehaviour {
 			break;
 		}
 
-		view.Hint = hands.Count > 0 ? hands[0].Cards : null;
+		if (hands.Count > 0) {
+			yield return null;
+			var curr = hands[0];
+			if (hands[hands.Count - 1].Combination == PokerHand.CombinationType.Dragon) {
+				curr = hands[hands.Count - 1];
+			} else {
+				for (int i = 0; i < hands.Count; ++i) {
+					if (TrickController.Instance.IsFirstTurn
+					    && !(hands [i].Cards [0].Nominal == "3" && hands [i].Cards [0].suit == Card.Suit.Diamond))
+						continue;
+					if (curr.Combination != hands[i].Combination)
+						curr = hands[i];
+					if (curr.Combination >= PokerHand.CombinationType.Straight)
+						break;
+				}
+			}
+			view.Hint = curr.Cards;
+		} else {
+			view.Hint = null;
+		}
+
 		isAnalyzing = false;
 		analyzeFilter = null;
 		analyzeCombination = PokerHand.CombinationType.Invalid;

@@ -43,6 +43,8 @@ public class PokerHand : IComparable<PokerHand> {
 			else if (FourOfAKind.Instance.IsValid (cards, true))
 				combination = CombinationType.FourOfAKind;
 			else if (FullHouse.Instance.IsValid (cards, true))
+				combination = CombinationType.FullHouse;
+			else if (Flush.Instance.IsValid (cards, true))
 				combination = CombinationType.Flush;
 			else if (Straight.Instance.IsValid (cards, true))
 				combination = CombinationType.Straight;
