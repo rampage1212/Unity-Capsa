@@ -76,7 +76,7 @@ public class PlayerController : MonoBehaviour {
 			if (Artificial && !isAnalyzing){
 				if (hands.Count > 0) {
 					if (!IsInvoking("AutoDeal")) {
-						Invoke("AutoDeal", Random.Range(view.Hint.Count * 0.5f, view.Hint.Count * 2.5f));
+						Invoke("AutoDeal", Random.Range(view.Hint.Count * 0.5f, view.Hint.Count * 2f));
 					}
 				} else {
 					yield return new WaitForSeconds(0.5f);

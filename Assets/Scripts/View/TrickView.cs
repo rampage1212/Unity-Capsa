@@ -4,6 +4,17 @@ using System.Collections;
 
 public class TrickView : MonoBehaviour {
 	public GameObject resultPanel;
+	public Image announcer;
+
+	public Sprite dragon;
+	public Sprite royalFlush;
+	public Sprite straightFlush;
+	public Sprite fourOfAKind;
+	public Sprite fullhouse;
+	public Sprite flush;
+	public Sprite straight;
+	public Sprite triple;
+	public Sprite pair;
 
 	TrickController controller;
 
@@ -66,6 +77,59 @@ public class TrickView : MonoBehaviour {
 			}
 			return Mathf.Abs(point);
 		}
+	}
+
+	public void Announce (PokerHand.CombinationType comb) {
+		if (comb == PokerHand.CombinationType.One)
+			return;
+
+		StopCoroutine ("Announcement");
+		announcer.color = Color.white;
+		switch (comb) {
+		case PokerHand.CombinationType.Pair:
+			announcer.sprite = pair;
+			break;
+		case PokerHand.CombinationType.Triple:
+			announcer.sprite = triple;
+			break;	
+		case PokerHand.CombinationType.Straight:
+			announcer.sprite = straight;
+			break;
+		case PokerHand.CombinationType.Flush:
+			announcer.sprite = flush;
+			break;
+		case PokerHand.CombinationType.FullHouse:
+			announcer.sprite = fullhouse;
+			break;
+		case PokerHand.CombinationType.StraightFlush:
+			announcer.sprite = straightFlush;
+			break;
+		case PokerHand.CombinationType.RoyalFlush:
+			announcer.sprite = royalFlush;
+			break;
+		case PokerHand.CombinationType.Dragon:
+			announcer.sprite = dragon;
+			break;
+		default:
+			announcer.sprite = null;
+			break;
+		}
+		StartCoroutine ("Announcement");
+	}
+
+	IEnumerator Announcement() {
+		float time = 3f;
+
+		while (time > 0) {
+			time -= Time.deltaTime;
+			if (time < 2f) {
+				var color = announcer.color;
+				color.a -= Time.deltaTime/2f;
+				announcer.color = color;
+			}
+			yield return null;
+		}
+		announcer.color = Color.clear;
 	}
 
 	public void OnPlayAgain() {

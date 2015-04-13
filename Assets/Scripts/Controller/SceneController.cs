@@ -13,8 +13,11 @@ public class SceneController : MonoBehaviour {
 	private static SceneController instance;
 	public static SceneController Instance {
 		get {
-			if(instance == null)
+			if(instance == null) {
 				instance = GameObject.FindObjectOfType<SceneController>();
+				if (instance == null)
+					Debug.LogException(new MissingReferenceException("Don't run capsa scene directly, run using menu scene"));
+			}
 			return instance;
 		}
 	}

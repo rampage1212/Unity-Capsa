@@ -156,6 +156,7 @@ public class TrickController : MonoBehaviour {
 				hand.Cards [i].button.interactable = false;
 				players [CurrentPlayer].Cards.Remove (hand.Cards [i]);
 			}
+			view.Announce(hand.Combination);
 			firstTurn = false;
 		};
 
