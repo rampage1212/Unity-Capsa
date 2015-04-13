@@ -136,7 +136,6 @@ public class TrickController : MonoBehaviour {
 	}
 
 	void OnGameOver() {
-		Debug.Log ("GameOver");
 		view.OnGameOver ();
 	}
 
@@ -202,5 +201,13 @@ public class TrickController : MonoBehaviour {
 			view.NotifyMessage(hand.Combination + " " + hand.Key.Nominal + "!= or <" + LastTrick.Combination + " " + LastTrick.Key.Nominal);
 			return false;
 		}
+	}
+
+	public void PlayAgain() {
+		SceneController.Instance.Play ();
+	}
+
+	public void Quit() {
+		SceneController.Instance.Menu ();
 	}
 }

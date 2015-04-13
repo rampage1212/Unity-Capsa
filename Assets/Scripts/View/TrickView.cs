@@ -67,4 +67,12 @@ public class TrickView : MonoBehaviour {
 			return Mathf.Abs(point);
 		}
 	}
+
+	public void OnPlayAgain() {
+		controller.PlayAgain ();
+	}
+
+	public void OnQuit() {
+		controller.Quit ();
+	}
 }
