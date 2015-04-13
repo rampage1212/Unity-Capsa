@@ -5,6 +5,7 @@ using System.Collections;
 public class TrickView : MonoBehaviour {
 	public GameObject resultPanel;
 	public Image announcer;
+	public Text notifier;
 
 	public Sprite dragon;
 	public Sprite royalFlush;
@@ -20,10 +21,6 @@ public class TrickView : MonoBehaviour {
 
 	void Awake() {
 		controller = GetComponent<TrickController> ();
-	}
-
-	public void NotifyMessage(string message) {
-		Debug.Log (message);
 	}
 
 	public void OnDealSuccess(){
@@ -130,6 +127,17 @@ public class TrickView : MonoBehaviour {
 			yield return null;
 		}
 		announcer.color = Color.clear;
+	}
+	
+	public void NotifyMessage(string message) {
+		notifier.text = message;
+		if (IsInvoking("ClearNotification"))
+			CancelInvoke("ClearNotification");
+		Invoke ("ClearNotification", 2f);
+	}
+
+	void ClearNotification() {
+		notifier.text = "";
 	}
 
 	public void OnPlayAgain() {

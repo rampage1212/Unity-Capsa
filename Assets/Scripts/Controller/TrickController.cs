@@ -199,7 +199,7 @@ public class TrickController : MonoBehaviour {
 					return true;
 				}
 			}
-			view.NotifyMessage(hand.Combination + " " + hand.Key.Nominal + "!= or <" + LastTrick.Combination + " " + LastTrick.Key.Nominal);
+			view.NotifyMessage ("Please Check Your Cards!");
 			return false;
 		}
 	}
