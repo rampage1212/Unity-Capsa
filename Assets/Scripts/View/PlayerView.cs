@@ -4,11 +4,20 @@ using System.Collections;
 using CardSet = System.Collections.Generic.List<Card>;
 
 public class PlayerView : MonoBehaviour {
+	[System.Serializable]
+	public class Avatar {
+		public Sprite normal;
+		public Sprite happy;
+		public Sprite sad;
+	}
+
+	public Image avatar_image;
+	public Avatar avatar;
 	public GameObject panel;
 	public GameObject passIndicator;
 	public Text labelTimer;
 	public Text labelCount;
-	public QuickBarHelper quickbar;
+	public QuickBarView quickbar;
 
 	PlayerController controller;
 
@@ -29,6 +38,10 @@ public class PlayerView : MonoBehaviour {
 		controller = GetComponent<PlayerController> ();
 	}
 
+	void Start(){
+		avatar_image.sprite = avatar.normal;
+	}
+
 	// Helper Events for controller
 	public void OnCardMarked(Card card) {
 		markedCards.Add (card);
@@ -45,6 +58,7 @@ public class PlayerView : MonoBehaviour {
 			panel.SetActive (true);
 		if (passIndicator)
 			passIndicator.SetActive (false);
+		avatar_image.sprite = avatar.normal;
 	}
 
 	public void OnTurnEnd() {
@@ -62,6 +76,7 @@ public class PlayerView : MonoBehaviour {
 	public void OnDealSuccess() {
 		markedCards.Clear ();
 		this.TotalCard = controller.Cards.Count;
+		avatar_image.sprite = avatar.happy;
 	}
 
 	public void OnDealFailed() {
@@ -69,6 +84,7 @@ public class PlayerView : MonoBehaviour {
 
 	public void OnPass() {
 		passIndicator.SetActive (true);
+		avatar_image.sprite = avatar.sad;
 	}
 
 	// Helper events for interface

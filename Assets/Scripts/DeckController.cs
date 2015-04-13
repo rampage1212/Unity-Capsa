@@ -14,7 +14,7 @@ public class DeckController : MonoBehaviour {
 	public GameObject skipSign;
 	public Text timerLabel;
 	public Text cardCountLabel;
-	public QuickBarHelper bar;
+	public QuickBarView bar;
 	
 	// Collection of card
 	List<Card> _cards = new List<Card>();

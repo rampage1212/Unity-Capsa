@@ -24,8 +24,9 @@ public class TrickView : MonoBehaviour {
 	public void OnGameOver(){
 		if (resultPanel == null)
 			return;
-
 		resultPanel.SetActive(true);
+
+		resultPanel = resultPanel.transform.GetChild (0).gameObject;
 		var p = resultPanel.transform.FindChild ("Player 1");
 		p.transform.FindChild ("Card").GetComponent<Text> ().text = controller.players [0].Cards.Count.ToString ();
 		p.transform.FindChild ("Points").GetComponent<Text> ().text = GetPoint (0).ToString();
@@ -41,6 +42,8 @@ public class TrickView : MonoBehaviour {
 		p = resultPanel.transform.FindChild ("Player 4");
 		p.transform.FindChild ("Card").GetComponent<Text> ().text = controller.players [3].Cards.Count.ToString ();
 		p.transform.FindChild ("Points").GetComponent<Text> ().text = GetPoint (3).ToString();
+
+		resultPanel = resultPanel.transform.parent.gameObject;
 	}
 
 	int GetPoint(int playerId) {

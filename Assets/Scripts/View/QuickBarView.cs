@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class QuickBarHelper : MonoBehaviour {
+public class QuickBarView: MonoBehaviour {
 	public Button straight;
 	public Button flush;
 	public Button fullHouse;
